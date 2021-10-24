@@ -1,0 +1,36 @@
+---
+title: "COVID plots"
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(zoo)
+source('load_data.R')
+uk_data <- load_uk_data()
+```
+```{r}
+rolling_plot <- function(var, title){
+  ggplot(data=uk_data, mapping=aes(x=date)) +
+  geom_col(mapping=aes(y=uk_data[[var]]), alpha=0.4) +
+  geom_line(mapping=aes(y=rollmean(uk_data[[var]], 7, align='left', fill=NA))) +
+  xlab('') +
+  ylab('') +
+  labs(title=title) +
+  geom_vline(xintercept=as.Date('2021-05-10'), color='#e41a1c') +
+  theme(aspect.ratio=0.5)
+}
+```
+# Overview plots
+These plots show a broad overview of the pandemic in the UK - cases, hospital admissions, deaths, and vaccines given. The solid line is a 7-day running average, and the red vertical line is at the 10th May 2021 where the figures in "Covid by Numbers" stop.
+
+```{r, warning=FALSE, message=FALSE}
+rolling_plot('newCasesBySpecimenDate', 'New cases')
+```
+
+```{r, warning=FALSE, message=FALSE}
+rolling_plot('newDeaths28DaysByDeathDate', 'New deaths')
+```
+
+```{r, warning=FALSE, message=FALSE}
+rolling_plot('newVaccinesGivenByPublishDate', 'New vaccines')
+```
